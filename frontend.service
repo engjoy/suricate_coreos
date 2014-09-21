@@ -1,0 +1,12 @@
+[Unit]
+Description=Exec node server
+After=docker.service
+Requires=docker.service
+After=etcd.service
+Requires=etcd.service
+
+[Service]
+ExecStartPre=/bin/sh -c "/usr/bin/docker rm -f suricate > /dev/null ; true"
+ExecStart=/usr/bin/docker run -p 8888:8888 --name suricate -e MONGO_URI=mongodb://172.17.8.101:27017 -e RABBITMQ_URI=amqp://admin:secret@172.17.8.101:5672/ engjoy/suricate python /misc/frontend.py 
+ExecStop=/usr/bin/docker stop suricate
+ExecStopPost=/usr/bin/docker rm -f suricate

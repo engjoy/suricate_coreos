@@ -1,0 +1,12 @@
+[Unit]
+Description=MongoDB server
+After=docker.service
+Requires=docker.service
+After=etcd.service
+Requires=etcd.service
+
+[Service]
+ExecStartPre=/bin/sh -c "/usr/bin/docker rm -f mongodb > /dev/null ; true"
+ExecStart=/usr/bin/docker run --name mongodb --env-file /etc/environment -p 27017:27017 dockerfile/mongodb
+ExecStop=/usr/bin/docker stop mongodb
+ExecStopPost=/usr/bin/docker rm -f mongodb

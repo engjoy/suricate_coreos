@@ -1,0 +1,12 @@
+[Unit]
+Description=Exec node server
+After=docker.service
+Requires=docker.service
+After=etcd.service
+Requires=etcd.service
+
+[Service]
+ExecStartPre=/bin/sh -c "/usr/bin/docker rm -f exec_node_foo > /dev/null ; true"
+ExecStart=/usr/bin/docker run --name exec_node_foo -e MONGO_URI=mongodb://172.17.8.101:27017 -e RABBITMQ_URI=amqp://admin:secret@172.17.8.101:5672/ engjoy/suricate python /misc/execnode.py foo
+ExecStop=/usr/bin/docker stop exec_node_foo
+ExecStopPost=/usr/bin/docker rm -f exec_node_foo

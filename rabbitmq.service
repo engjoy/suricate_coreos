@@ -1,0 +1,12 @@
+[Unit]
+Description=RabbitMQ server
+After=docker.service
+Requires=docker.service
+After=etcd.service
+Requires=etcd.service
+	
+[Service]
+ExecStartPre=/bin/sh -c "/usr/bin/docker rm -f rabbitmq > /dev/null ; true"
+ExecStart=/usr/bin/docker run -p 5672:5672 -p 15672:15672 -e RABBITMQ_PASS=secret --name rabbitmq tutum/rabbitmq
+ExecStop=/usr/bin/docker stop rabbitmq
+ExecStopPost=/usr/bin/docker rm -f rabbitmq
